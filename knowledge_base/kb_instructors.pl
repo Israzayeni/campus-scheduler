@@ -16,3 +16,22 @@ available(prof_sana, s5).  available(prof_sana, s6).
 available(prof_sana, s11). available(prof_sana, s12).
 available(prof_sana, s15). available(prof_sana, s16).
 
+% Prof Karim available Mon-Tue afternoon + Wed morning
+available(prof_karim, s5).  available(prof_karim, s6).
+available(prof_karim, s7).  available(prof_karim, s8).
+available(prof_karim, s13). available(prof_karim, s14).
+available(prof_karim, s17). available(prof_karim, s18).
+available(prof_karim, s19). available(prof_karim, s20).
+
+% Prof Rania available Wed afternoon + Thu-Fri
+available(prof_rania, s21). available(prof_rania, s22).
+available(prof_rania, s23). available(prof_rania, s24).
+available(prof_rania, s25). available(prof_rania, s26).
+available(prof_rania, s27). available(prof_rania, s28).
+available(prof_rania, s29). available(prof_rania, s30).
+available(prof_rania, s31). available(prof_rania, s32).
+available(prof_rania, s33). available(prof_rania, s34).
+available(prof_rania, s35). available(prof_rania, s36).
+available(prof_rania, s37). available(prof_rania, s38).
+available(prof_rania, s39). available(prof_rania, s40).
+

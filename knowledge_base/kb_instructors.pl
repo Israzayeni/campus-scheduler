@@ -35,3 +35,22 @@ available(prof_rania, s35). available(prof_rania, s36).
 available(prof_rania, s37). available(prof_rania, s38).
 available(prof_rania, s39). available(prof_rania, s40).
 
+% --- EXTRA SLOTS TO SATISFY GROUP SCHEDULING ---
+
+% Give Prof Ali 4 extra slots (needs at least 3)
+available(prof_ali, s15).
+available(prof_ali, s16).
+available(prof_ali, s17).
+available(prof_ali, s18).
+
+% Give Prof Sana 5 extra slots (needs at least 4)
+available(prof_sana, s1).
+available(prof_sana, s2).
+available(prof_sana, s3).
+available(prof_sana, s4).
+available(prof_sana, s13).
+
+% Give Prof Karim 3 extra slots (needs at least 2)
+available(prof_karim, s1).
+available(prof_karim, s2).
+available(prof_karim, s3).

@@ -11,13 +11,7 @@
 :- use_module(knowledge_base/kb_helpers, except([instructor_available/2])).
 :- use_module(constraints/constraints, except([room_free/3, group_free/3])).
 
-% --------------------------------------------------------------------
-% go/0
-% --------------------------------------------------------------------
-% What it does:
-%   Collects all courses and invokes the scheduler to find a single
-%   valid schedule. Prints the schedule, energy state, and total energy.
-% --------------------------------------------------------------------
+
 go :-
     findall(C, course(C), Courses),
     (   run_scheduler(Courses, Schedule, EnergyState)
@@ -28,13 +22,7 @@ go :-
     ;   format('Error: Failed to find a valid schedule.~n')
     ).
 
-% --------------------------------------------------------------------
-% go_all/0
-% --------------------------------------------------------------------
-% What it does:
-%   Explores the entire search space to find ALL valid schedules using
-%   findall/3. Prints the total count and displays the first schedule.
-% --------------------------------------------------------------------
+
 go_all :-
     findall(C, course(C), Courses),
     findall(S-ES, run_scheduler(Courses, S, ES), All),
@@ -47,14 +35,7 @@ go_all :-
     ;   true
     ).
 
-% --------------------------------------------------------------------
-% check_all/0
-% --------------------------------------------------------------------
-% What it does:
-%   Uses predicate_property/2 to verify that all required predicates
-%   from P1, P2, P4 (and P3's integration adapters) are fully loaded
-%   and visible in the environment.
-% --------------------------------------------------------------------
+
 check_all :-
     Preds = [
         course/1, room/1, time_slot/1, sessions_required/2,
@@ -77,12 +58,7 @@ check_preds([P/A|Rest]) :-
     ),
     check_preds(Rest).
 
-% --------------------------------------------------------------------
-% print_energy_state/1
-% --------------------------------------------------------------------
-% What it does:
-%   Formats and prints the final daily energy consumption per building.
-% --------------------------------------------------------------------
+
 print_energy_state([]).
 print_energy_state([energy(Building, Day, Total) | Rest]) :-
     format('Building ~w on ~w: ~w kWh~n', [Building, Day, Total]),

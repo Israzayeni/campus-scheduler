@@ -38,18 +38,22 @@ go_metrics :-
         format('5. Weighted Score: ~w~n', [Score])
     ;   format('Error: Failed to find a valid schedule.~n')
     ).
-
-
-go_all :-
+go_optimal :-
+    format('~n=== FINDING OPTIMAL SCHEDULE ===~n'),
     findall(C, course(C), Courses),
-    findall(S-ES, run_scheduler(Courses, S, ES), All),
-    length(All, Count),
-    format('Found ~w valid schedules.~n', [Count]),
-    (   Count > 0, All = [FirstS-FirstES | _]
-    ->  format('First schedule:~n'),
-        print_schedule(FirstS),
-        print_energy_state(FirstES)
-    ;   true
+    (   run_scheduler(Courses, Schedule, _)
+    ->  total_energy(Schedule, T),
+        imbalance_calculation(Schedule, I),
+        room_fairness_variance(Schedule, V),
+        weighted_score(T, I, V, Score),
+        length(Schedule, Sessions),
+        format('~nOptimal Schedule Found!~n'),
+        format('Sessions: ~w~n', [Sessions]),
+        format('Total Energy: ~w kWh~n', [T]),
+        format('Load Imbalance: ~w~n', [I]),
+        format('Room Variance: ~w~n', [V]),
+        format('Optimization Score: ~w~n', [Score])
+    ;   format('No valid schedule found.~n')
     ).
 
 

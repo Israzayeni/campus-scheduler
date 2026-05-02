@@ -9,8 +9,10 @@
 
 :- use_module(energy/energy_facts).
 :- use_module(knowledge_base/kb_helpers).
+:- use_module(knowledge_base/kb_courses).
+:- use_module(scheduler/scheduler).
 
-% METRIC 1: Total Energy - Sum all session energies
+% METRIC 1: Total Energy
 total_energy([], 0).
 total_energy([session(_, _, Room, TimeSlot, _) | Rest], Total) :-
     energy_facts:room_energy_cost(Room, CostPerHour),
@@ -82,6 +84,38 @@ weighted_score(TotalEnergy, Imbalance, Variance, Score) :-
     Fairness is 1.0 / (1.0 + Variance),
     Score is W1 * TotalEnergy + W2 * Imbalance + W3 * Fairness.
 
-% METRIC 6: Optimal Schedule - NOT NEEDED YET
-optimal_schedule(Schedule) :- 
-    Schedule = [].
+% METRIC 6: Optimal Schedule
+% Generates all valid schedules and returns the one with the best score
+optimal_schedule(BestSchedule) :-
+    findall(C, kb_courses:course(C, _, _, _, _), Courses),
+    findall(Score-Schedule,
+            (scheduler:run_scheduler(Courses, Schedule, _),
+             Schedule \= [],
+             total_energy(Schedule, T),
+             imbalance_calculation(Schedule, I),
+             room_fairness_variance(Schedule, V),
+             weighted_score(T, I, V, Score)),
+            ScoredSchedules),
+    (   ScoredSchedules = []
+    ->  BestSchedule = []
+    ;   sort(ScoredSchedules, Sorted),
+        Sorted = [_-BestSchedule|_]
+    ).
+
+% Helper to get best N schedules
+best_n_schedules(N, BestSchedules) :-
+    findall(C, kb_courses:course(C, _, _, _, _), Courses),
+    findall(Score-Schedule,
+            (scheduler:run_scheduler(Courses, Schedule, _),
+             Schedule \= [],
+             total_energy(Schedule, T),
+             imbalance_calculation(Schedule, I),
+             room_fairness_variance(Schedule, V),
+             weighted_score(T, I, V, Score)),
+            ScoredSchedules),
+    sort(ScoredSchedules, Sorted),
+    length(TopN, N),
+    append(TopN, _, Sorted),
+    maplist(extract_schedule, TopN, BestSchedules).
+
+extract_schedule(_-Schedule, Schedule).

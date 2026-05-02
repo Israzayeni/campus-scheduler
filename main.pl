@@ -1,8 +1,7 @@
 :- use_module(scheduler/scheduler).
 :- use_module(energy/energy_model, except([session_energy/3])).
+:- use_module(energy/metrics).
 :- use_module(knowledge_base/kb_courses).
-
-% Other modules imported so check_all can verify their visibility
 :- use_module(knowledge_base/kb_buildings).
 :- use_module(knowledge_base/kb_rooms).
 :- use_module(knowledge_base/kb_timeslots).
@@ -19,6 +18,24 @@ go :-
         print_energy_state(EnergyState),
         total_energy(Schedule, Total),
         format('Total Energy: ~w kWh~n', [Total])
+    ;   format('Error: Failed to find a valid schedule.~n')
+    ).
+
+
+go_metrics :-
+    findall(C, course(C), Courses),
+    (   run_scheduler(Courses, Schedule, EnergyState)
+    ->  format('~n=== METRICS REPORT ===~n'),
+        total_energy(Schedule, T),
+        format('1. Total Energy: ~w kWh~n', [T]),
+        daily_energy_summary(Schedule, DS),
+        format('2. Daily Summary: ~w~n', [DS]),
+        imbalance_calculation(Schedule, I),
+        format('3. Imbalance: ~w~n', [I]),
+        room_fairness_variance(Schedule, V),
+        format('4. Room Variance: ~w~n', [V]),
+        weighted_score(T, I, V, Score),
+        format('5. Weighted Score: ~w~n', [Score])
     ;   format('Error: Failed to find a valid schedule.~n')
     ).
 
@@ -49,6 +66,7 @@ check_all :-
     ],
     check_preds(Preds).
 
+
 check_preds([]).
 check_preds([P/A|Rest]) :-
     functor(Head, P, A),
@@ -63,3 +81,9 @@ print_energy_state([]).
 print_energy_state([energy(Building, Day, Total) | Rest]) :-
     format('Building ~w on ~w: ~w kWh~n', [Building, Day, Total]),
     print_energy_state(Rest).
+
+
+print_schedule([]).
+print_schedule([session(Course, Group, Room, TimeSlot, Instructor) | Rest]) :-
+    format('Course ~w (Group ~w): Room ~w at ~w with ~w~n', [Course, Group, Room, TimeSlot, Instructor]),
+    print_schedule(Rest).
